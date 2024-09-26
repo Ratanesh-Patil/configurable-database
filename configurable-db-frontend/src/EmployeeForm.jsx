@@ -29,19 +29,56 @@ const EmployeeForm = () => {
     const updatedFields = dynamicFields.map((dynamicField, idx) =>
       idx === index ? { ...dynamicField, [field]: value } : dynamicField
     );
+    console.log(updatedFields);
+
     setDynamicFields(updatedFields);
   };
+
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+
+  //   // Prepare the dynamic fields as a JSON object
+  //   const dynamicFieldsData = dynamicFields.reduce((acc, curr) => {
+  //     if (curr.key) {
+  //       acc[curr.key] = curr.value;
+  //     }
+  //     return acc;
+  //   }, {});
+
+  //   const employeeData = {
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     department,
+  //     salary: salary ? parseInt(salary) : null,
+  //     dynamicFields: dynamicFieldsData,
+  //   };
+
+  //   try {
+  //     await axios.post("http://localhost:8080/api/employees", employeeData); // Replace with your API endpoint
+  //     alert("Employee added successfully!");
+  //     // Reset form
+  //     setFirstName("");
+  //     setLastName("");
+  //     setEmail("");
+  //     setDepartment("");
+  //     setSalary("");
+  //     setDynamicFields([{ key: "", value: "", type: "string" }]);
+  //   } catch (error) {
+  //     console.error("Error adding employee:", error);
+  //     alert("Failed to add employee.");
+  //   }
+  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Prepare the dynamic fields as a JSON object
-    const dynamicFieldsData = dynamicFields.reduce((acc, curr) => {
-      if (curr.key) {
-        acc[curr.key] = curr.value;
-      }
-      return acc;
-    }, {});
+    // Dynamic fields with metadata (key, value, type)
+    const dynamicFieldsData = dynamicFields.map((field) => ({
+      key: field.key,
+      value: field.value,
+      type: field.type, // Include type in the dynamic field data
+    }));
 
     const employeeData = {
       firstName,
@@ -49,11 +86,11 @@ const EmployeeForm = () => {
       email,
       department,
       salary: salary ? parseInt(salary) : null,
-      dynamicFields: dynamicFieldsData,
+      dynamicFields: dynamicFieldsData, // Send the full object
     };
 
     try {
-      await axios.post("http://localhost:8080/api/employees", employeeData); // Replace with your API endpoint
+      await axios.post("http://localhost:8081/api/employees/add", employeeData);
       alert("Employee added successfully!");
       // Reset form
       setFirstName("");
