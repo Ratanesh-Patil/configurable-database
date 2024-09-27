@@ -8,7 +8,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const AdminFieldConfiguration = () => {
   const [fieldName, setFieldName] = useState("");
@@ -38,15 +40,40 @@ const AdminFieldConfiguration = () => {
       alert("Field configuration created successfully");
       setFieldName("");
       setFieldType("");
+
+      // Refresh field configurations after adding a new field
+      const response = await axios.get(
+        "http://localhost:8081/api/tasks/field-configurations"
+      );
+      setFieldConfigurations(response.data);
     } catch (error) {
       console.error("Error creating field configuration", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this field?")) {
+      try {
+        await axios.delete(
+          `http://localhost:8081/api/tasks/field-configuration/${id}`
+        );
+        alert("Field configuration deleted successfully");
+
+        // Refresh field configurations after deleting a field
+        const response = await axios.get(
+          "http://localhost:8081/api/tasks/field-configurations"
+        );
+        setFieldConfigurations(response.data);
+      } catch (error) {
+        console.error("Error deleting field configuration", error);
+      }
     }
   };
 
   return (
     <Paper style={{ padding: 20, marginBottom: 20 }}>
       <Typography variant="h5" gutterBottom>
-        Manage Field Configurations
+        Add New Field
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -60,10 +87,9 @@ const AdminFieldConfiguration = () => {
         <TextField
           fullWidth
           select
-          //   label="Field Type"
           value={fieldType}
           onChange={(e) => setFieldType(e.target.value)}
-          variant="outlined"
+          variant="filled"
           style={{ marginBottom: 16 }}
           SelectProps={{
             native: true,
@@ -72,6 +98,9 @@ const AdminFieldConfiguration = () => {
           <option value="">Select Type</option>
           <option value="text">Text</option>
           <option value="number">Number</option>
+          <option value="boolean">Boolean</option>
+          <option value="date">Date</option>
+          <option value="varchar">Varchar</option>
         </TextField>
         <Button
           type="submit"
@@ -79,15 +108,26 @@ const AdminFieldConfiguration = () => {
           color="primary"
           style={{ marginBottom: 16 }}
         >
-          Add Field Configuration
+          Add
         </Button>
       </form>
       <Typography variant="h6" gutterBottom>
-        Existing Field Configurations
+        Existing Fields
       </Typography>
       <List>
         {fieldConfigurations.map((field) => (
-          <ListItem key={field.id}>
+          <ListItem
+            key={field.id}
+            secondaryAction={
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDelete(field.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            }
+          >
             <ListItemText primary={`${field.fieldName} (${field.fieldType})`} />
           </ListItem>
         ))}

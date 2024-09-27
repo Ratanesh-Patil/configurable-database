@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { TextField, Button, Typography, Grid, Paper } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Typography,
+  Grid,
+  Paper,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const TaskForm = () => {
   const [taskName, setTaskName] = useState("");
@@ -24,6 +33,15 @@ const TaskForm = () => {
     setAdditionalFields((prevFields) => ({ ...prevFields, [name]: value }));
   };
 
+  const handleDateChange = (name, date) => {
+    setAdditionalFields((prevFields) => ({ ...prevFields, [name]: date }));
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setAdditionalFields((prevFields) => ({ ...prevFields, [name]: checked }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const taskData = { taskName, description, additionalFields };
@@ -39,10 +57,67 @@ const TaskForm = () => {
     }
   };
 
+  const renderField = (field) => {
+    switch (field.fieldType) {
+      case "text":
+      case "varchar":
+        return (
+          <TextField
+            fullWidth
+            label={field.fieldName}
+            type="text"
+            name={field.fieldName}
+            value={additionalFields[field.fieldName] || ""}
+            onChange={handleChange}
+            variant="filled"
+          />
+        );
+      case "number":
+        return (
+          <TextField
+            fullWidth
+            label={field.fieldName}
+            type="number"
+            name={field.fieldName}
+            value={additionalFields[field.fieldName] || ""}
+            onChange={handleChange}
+            variant="filled"
+          />
+        );
+      case "boolean":
+        return (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={additionalFields[field.fieldName] || false}
+                onChange={handleCheckboxChange}
+                name={field.fieldName}
+              />
+            }
+            label={field.fieldName}
+          />
+        );
+      case "date":
+        return (
+          <TextField
+            fullWidth
+            label={field.fieldName}
+            type={field.fieldType}
+            name={field.fieldName}
+            value={additionalFields[field.fieldName] || ""}
+            onChange={handleChange}
+            variant="filled"
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Paper style={{ padding: 20, marginBottom: 20 }}>
       <Typography variant="h5" gutterBottom>
-        Create a New Task
+        Add New Task
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
@@ -68,20 +143,12 @@ const TaskForm = () => {
           </Grid>
           {fieldConfigurations.map((field) => (
             <Grid item xs={12} key={field.id}>
-              <TextField
-                fullWidth
-                label={field.fieldName}
-                type={field.fieldType}
-                name={field.fieldName}
-                value={additionalFields[field.fieldName] || ""}
-                onChange={handleChange}
-                variant="outlined"
-              />
+              {renderField(field)}
             </Grid>
           ))}
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">
-              Create Task
+              Add Task
             </Button>
           </Grid>
         </Grid>
