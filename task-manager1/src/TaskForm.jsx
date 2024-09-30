@@ -9,19 +9,23 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Import the CSS for the date picker
 
 const TaskForm = () => {
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [fieldConfigurations, setFieldConfigurations] = useState([]);
   const [additionalFields, setAdditionalFields] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null); // State for DatePicker
 
   useEffect(() => {
     const fetchFieldConfigurations = async () => {
       const response = await axios.get(
         "http://localhost:8081/api/tasks/field-configurations"
       );
+      console.log(response.data);
+
       setFieldConfigurations(response.data);
     };
 
@@ -33,10 +37,6 @@ const TaskForm = () => {
     setAdditionalFields((prevFields) => ({ ...prevFields, [name]: value }));
   };
 
-  const handleDateChange = (name, date) => {
-    setAdditionalFields((prevFields) => ({ ...prevFields, [name]: date }));
-  };
-
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setAdditionalFields((prevFields) => ({ ...prevFields, [name]: checked }));
@@ -44,7 +44,12 @@ const TaskForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const taskData = { taskName, description, additionalFields };
+    const taskData = {
+      taskName,
+      description,
+      additionalFields,
+      selectedDate, // Include the selected date
+    };
 
     try {
       await axios.post("http://localhost:8081/api/tasks/create", taskData);
@@ -52,6 +57,7 @@ const TaskForm = () => {
       setTaskName("");
       setDescription("");
       setAdditionalFields({});
+      setSelectedDate(null); // Clear the date after submission
     } catch (error) {
       console.error("Error creating task", error);
     }
@@ -99,14 +105,12 @@ const TaskForm = () => {
         );
       case "date":
         return (
-          <TextField
-            fullWidth
-            label={field.fieldName}
-            type={field.fieldType}
-            name={field.fieldName}
-            value={additionalFields[field.fieldName] || ""}
-            onChange={handleChange}
-            variant="filled"
+          <DatePicker
+            selected={selectedDate} // Use the state variable
+            onChange={(date) => setSelectedDate(date)} // Handle date change
+            dateFormat="yyyy/MM/dd"
+            isClearable
+            placeholderText={`Select ${field.fieldName}`}
           />
         );
       default:

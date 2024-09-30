@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  MenuItem,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -87,20 +88,20 @@ const AdminFieldConfiguration = () => {
         <TextField
           fullWidth
           select
+          label="Field Type"
           value={fieldType}
           onChange={(e) => setFieldType(e.target.value)}
           variant="filled"
           style={{ marginBottom: 16 }}
-          SelectProps={{
-            native: true,
-          }}
         >
-          <option value="">Select Type</option>
-          <option value="text">Text</option>
-          <option value="number">Number</option>
-          <option value="boolean">Boolean</option>
-          <option value="date">Date</option>
-          <option value="varchar">Varchar</option>
+          <MenuItem value="">Select Type</MenuItem>
+          <MenuItem value="text">Text</MenuItem>
+          <MenuItem value="number">Number</MenuItem>
+          <MenuItem value="email">Email</MenuItem>
+          <MenuItem value="password">Password</MenuItem>
+          <MenuItem value="date">Date</MenuItem>
+          <MenuItem value="boolean">Boolean</MenuItem>
+          <MenuItem value="varchar">Varchar</MenuItem>
         </TextField>
         <Button
           type="submit"
