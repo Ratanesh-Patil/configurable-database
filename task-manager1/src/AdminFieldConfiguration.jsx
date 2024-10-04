@@ -16,6 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const AdminFieldConfiguration = () => {
   const [fieldName, setFieldName] = useState("");
   const [fieldType, setFieldType] = useState("");
+  const [fieldOptions, setFieldOptions] = useState(""); // State for dropdown options
   const [fieldConfigurations, setFieldConfigurations] = useState([]);
 
   useEffect(() => {
@@ -31,7 +32,16 @@ const AdminFieldConfiguration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newFieldConfig = { fieldName, fieldType };
+
+    // Prepare new field configuration
+    const newFieldConfig = {
+      fieldName,
+      fieldType,
+      options:
+        fieldType === "dropdown"
+          ? fieldOptions.split(",").map((option) => option.trim())
+          : [], // Split options if dropdown
+    };
 
     try {
       await axios.post(
@@ -41,6 +51,7 @@ const AdminFieldConfiguration = () => {
       alert("Field configuration created successfully");
       setFieldName("");
       setFieldType("");
+      setFieldOptions(""); // Reset options
 
       // Refresh field configurations after adding a new field
       const response = await axios.get(
@@ -73,7 +84,7 @@ const AdminFieldConfiguration = () => {
 
   return (
     <Paper style={{ padding: 20, marginBottom: 20 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" fontSize={20} gutterBottom>
         Add New Field
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -102,7 +113,21 @@ const AdminFieldConfiguration = () => {
           <MenuItem value="date">Date</MenuItem>
           <MenuItem value="boolean">Boolean</MenuItem>
           <MenuItem value="varchar">Varchar</MenuItem>
+          <MenuItem value="dropdown">Dropdown</MenuItem>{" "}
+          {/* Added dropdown option */}
         </TextField>
+
+        {fieldType === "dropdown" && (
+          <TextField
+            fullWidth
+            label="Options (comma-separated)"
+            value={fieldOptions}
+            onChange={(e) => setFieldOptions(e.target.value)}
+            variant="outlined"
+            style={{ marginBottom: 16 }}
+          />
+        )}
+
         <Button
           type="submit"
           variant="contained"
@@ -129,7 +154,14 @@ const AdminFieldConfiguration = () => {
               </IconButton>
             }
           >
-            <ListItemText primary={`${field.fieldName} (${field.fieldType})`} />
+            <ListItemText
+              primary={`${field.fieldName} (${field.fieldType})`}
+              // secondary={
+              //   field.fieldType === "dropdown"
+              //     ? `Options: ${field?.fieldOptions.join(", ")}`
+              //     : null
+              // }
+            />
           </ListItem>
         ))}
       </List>

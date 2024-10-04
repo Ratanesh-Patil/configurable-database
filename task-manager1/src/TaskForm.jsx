@@ -8,6 +8,10 @@ import {
   Paper,
   Checkbox,
   FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Import the CSS for the date picker
@@ -90,7 +94,31 @@ const TaskForm = () => {
             variant="filled"
           />
         );
-      case "boolean":
+      case "email": // For email input
+        return (
+          <TextField
+            fullWidth
+            label={field.fieldName}
+            type="email"
+            name={field.fieldName}
+            value={additionalFields[field.fieldName] || ""}
+            onChange={handleChange}
+            variant="filled"
+          />
+        );
+      case "password": // For password input
+        return (
+          <TextField
+            fullWidth
+            label={field.fieldName}
+            type="password"
+            name={field.fieldName}
+            value={additionalFields[field.fieldName] || ""}
+            onChange={handleChange}
+            variant="filled"
+          />
+        );
+      case "boolean": // Checkbox for boolean values
         return (
           <FormControlLabel
             control={
@@ -103,15 +131,39 @@ const TaskForm = () => {
             label={field.fieldName}
           />
         );
-      case "date":
+      case "date": // Date picker input
         return (
           <DatePicker
-            selected={selectedDate} // Use the state variable
-            onChange={(date) => setSelectedDate(date)} // Handle date change
+            selected={selectedDate} // Use state for selected date
+            onChange={(date) => setSelectedDate(date)} // Update selected date
             dateFormat="yyyy/MM/dd"
             isClearable
             placeholderText={`Select ${field.fieldName}`}
           />
+        );
+      case "dropdown": // Dropdown menu
+        return (
+          <FormControl fullWidth variant="filled">
+            <InputLabel id={`${field.fieldName}-label`}>
+              {field.fieldName}
+            </InputLabel>
+            <Select
+              labelId={`${field.fieldName}-label`}
+              value={additionalFields[field.fieldName] || ""}
+              onChange={handleChange}
+              name={field.fieldName}
+            >
+              {field.options.map(
+                (
+                  option // Assuming field.options contains the dropdown options
+                ) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                )
+              )}
+            </Select>
+          </FormControl>
         );
       default:
         return null;
@@ -120,7 +172,7 @@ const TaskForm = () => {
 
   return (
     <Paper style={{ padding: 20, marginBottom: 20 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h6" gutterBottom>
         Add New Task
       </Typography>
       <form onSubmit={handleSubmit}>

@@ -3,9 +3,10 @@ import axios from "axios";
 import {
   Typography,
   Paper,
-  List,
-  ListItem,
-  ListItemText,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
   IconButton,
   CircularProgress,
   Alert,
@@ -93,42 +94,47 @@ const TaskList = () => {
 
   return (
     <Paper style={{ padding: 20 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" fontSize={20} gutterBottom>
         All Tasks
       </Typography>
-      {tasks.length === 0 ? (
-        <Typography>No tasks available.</Typography>
-      ) : (
-        <List>
-          {tasks.map((task) => (
-            <ListItem key={task.id} divider>
-              <ListItemText
-                primary={task.taskName}
-                secondary={
-                  <>
-                    <div>{task.description}</div>
+      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+        <Grid container spacing={2}>
+          {tasks.length === 0 ? (
+            <Typography>No tasks available.</Typography>
+          ) : (
+            tasks.map((task) => (
+              <Grid item xs={12} sm={6} md={4} key={task.id}>
+                <Card variant="outlined">
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      {task.taskName}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {task.description}
+                    </Typography>
                     {Object.entries(task.additionalFields).map(
                       ([key, value]) => (
-                        <div key={key}>
+                        <Typography key={key} variant="body2">
                           <strong>{key}:</strong> {value}
-                        </div>
+                        </Typography>
                       )
                     )}
-                  </>
-                }
-              />
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => handleDelete(task.id)}
-                style={{ marginLeft: 16 }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </ListItem>
-          ))}
-        </List>
-      )}
+                  </CardContent>
+                  <CardActions>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDelete(task.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </div>
       {deleteError && <Alert severity="error">{deleteError}</Alert>}
     </Paper>
   );
