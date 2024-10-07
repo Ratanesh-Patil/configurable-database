@@ -83,9 +83,9 @@ const AdminFieldConfiguration = () => {
   };
 
   return (
-    <Paper style={{ padding: 20, marginBottom: 20 }}>
+    <Paper style={{ padding: 20, marginBottom: 10 }}>
       <Typography variant="h5" fontSize={20} gutterBottom>
-        Add New Field
+        Add New Field in Task Form
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -138,7 +138,7 @@ const AdminFieldConfiguration = () => {
         </Button>
       </form>
       <Typography variant="h6" gutterBottom>
-        Existing Fields
+        Newly Added Task Form Fields
       </Typography>
       <List>
         {fieldConfigurations.map((field) => (
@@ -148,19 +148,21 @@ const AdminFieldConfiguration = () => {
               <IconButton
                 edge="end"
                 aria-label="delete"
+                color="error"
+                size="small"
                 onClick={() => handleDelete(field.id)}
               >
-                <DeleteIcon />
+                <DeleteIcon  />
               </IconButton>
             }
           >
             <ListItemText
               primary={`${field.fieldName} (${field.fieldType})`}
-              // secondary={
-              //   field.fieldType === "dropdown"
-              //     ? `Options: ${field?.fieldOptions.join(", ")}`
-              //     : null
-              // }
+              secondary={
+                field.fieldType === "dropdown"
+                  ? `Options: ${field?.options.join(", ")}`
+                  : null
+              }
             />
           </ListItem>
         ))}

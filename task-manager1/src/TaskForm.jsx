@@ -23,29 +23,36 @@ const TaskForm = () => {
   const [additionalFields, setAdditionalFields] = useState({});
   const [selectedDate, setSelectedDate] = useState(null); // State for DatePicker
 
+  // Fetch field configurations from the backend
   useEffect(() => {
     const fetchFieldConfigurations = async () => {
-      const response = await axios.get(
-        "http://localhost:8081/api/tasks/field-configurations"
-      );
-      console.log(response.data);
-
-      setFieldConfigurations(response.data);
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/api/tasks/field-configurations"
+        );
+        console.log(response.data);
+        setFieldConfigurations(response.data);
+      } catch (error) {
+        console.error("Error fetching field configurations", error);
+      }
     };
 
     fetchFieldConfigurations();
   }, []);
 
+  // Handle changes for text fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAdditionalFields((prevFields) => ({ ...prevFields, [name]: value }));
   };
 
+  // Handle changes for checkboxes
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setAdditionalFields((prevFields) => ({ ...prevFields, [name]: checked }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const taskData = {
@@ -58,15 +65,17 @@ const TaskForm = () => {
     try {
       await axios.post("http://localhost:8081/api/tasks/create", taskData);
       alert("Task created successfully");
+      // Reset form fields
       setTaskName("");
       setDescription("");
       setAdditionalFields({});
-      setSelectedDate(null); // Clear the date after submission
+      setSelectedDate(null);
     } catch (error) {
       console.error("Error creating task", error);
     }
   };
 
+  // Render dynamic form fields based on field type
   const renderField = (field) => {
     switch (field.fieldType) {
       case "text":
@@ -94,7 +103,7 @@ const TaskForm = () => {
             variant="filled"
           />
         );
-      case "email": // For email input
+      case "email":
         return (
           <TextField
             fullWidth
@@ -106,7 +115,7 @@ const TaskForm = () => {
             variant="filled"
           />
         );
-      case "password": // For password input
+      case "password":
         return (
           <TextField
             fullWidth
@@ -118,7 +127,7 @@ const TaskForm = () => {
             variant="filled"
           />
         );
-      case "boolean": // Checkbox for boolean values
+      case "boolean":
         return (
           <FormControlLabel
             control={
@@ -131,17 +140,17 @@ const TaskForm = () => {
             label={field.fieldName}
           />
         );
-      case "date": // Date picker input
+      case "date":
         return (
           <DatePicker
-            selected={selectedDate} // Use state for selected date
-            onChange={(date) => setSelectedDate(date)} // Update selected date
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
             dateFormat="yyyy/MM/dd"
             isClearable
             placeholderText={`Select ${field.fieldName}`}
           />
         );
-      case "dropdown": // Dropdown menu
+      case "dropdown":
         return (
           <FormControl fullWidth variant="filled">
             <InputLabel id={`${field.fieldName}-label`}>
@@ -153,15 +162,11 @@ const TaskForm = () => {
               onChange={handleChange}
               name={field.fieldName}
             >
-              {field.options.map(
-                (
-                  option // Assuming field.options contains the dropdown options
-                ) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                )
-              )}
+              {field.options.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         );

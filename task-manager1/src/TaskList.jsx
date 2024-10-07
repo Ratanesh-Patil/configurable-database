@@ -72,8 +72,8 @@ const TaskList = () => {
 
   if (loading) {
     return (
-      <Paper style={{ padding: 20 }}>
-        <Typography variant="h5" gutterBottom>
+      <Paper sx={{ padding: 2 }}>
+        <Typography variant="h6" sx={{ fontSize: "1rem", marginBottom: 2 }}>
           Loading Tasks...
         </Typography>
         <CircularProgress />
@@ -83,8 +83,8 @@ const TaskList = () => {
 
   if (error) {
     return (
-      <Paper style={{ padding: 20 }}>
-        <Typography variant="h5" gutterBottom>
+      <Paper sx={{ padding: 2 }}>
+        <Typography variant="h6" sx={{ fontSize: "1rem", marginBottom: 2 }}>
           Error
         </Typography>
         <Alert severity="error">{error}</Alert>
@@ -93,40 +93,54 @@ const TaskList = () => {
   }
 
   return (
-    <Paper style={{ padding: 20 }}>
-      <Typography variant="h5" fontSize={20} gutterBottom>
+    <Paper sx={{ padding: 2 }}>
+      <Typography variant="h6" sx={{ fontSize: "1rem", marginBottom: 2 }}>
         All Tasks
       </Typography>
       <div style={{ maxHeight: "400px", overflowY: "auto" }}>
         <Grid container spacing={2}>
           {tasks.length === 0 ? (
-            <Typography>No tasks available.</Typography>
+            <Typography sx={{ fontSize: "0.875rem" }}>
+              No tasks available.
+            </Typography>
           ) : (
             tasks.map((task) => (
               <Grid item xs={12} sm={6} md={4} key={task.id}>
-                <Card variant="outlined">
+                <Card variant="outlined" sx={{ height: "100%" }}>
                   <CardContent>
-                    <Typography variant="h6" component="div">
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ fontSize: "0.875rem" }}
+                    >
                       {task.taskName}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ fontSize: "0.75rem", marginBottom: 1 }}
+                    >
                       {task.description}
                     </Typography>
                     {Object.entries(task.additionalFields).map(
                       ([key, value]) => (
-                        <Typography key={key} variant="body2">
+                        <Typography
+                          key={key}
+                          variant="body2"
+                          sx={{ fontSize: "0.75rem", marginBottom: 0.5 }}
+                        >
                           <strong>{key}:</strong> {value}
                         </Typography>
                       )
                     )}
                   </CardContent>
-                  <CardActions>
+                  <CardActions sx={{ justifyContent: "flex-end" }}>
                     <IconButton
                       edge="end"
                       aria-label="delete"
                       onClick={() => handleDelete(task.id)}
                     >
-                      <DeleteIcon />
+                      <DeleteIcon fontSize="small" />
                     </IconButton>
                   </CardActions>
                 </Card>
