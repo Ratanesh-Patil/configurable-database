@@ -91,7 +91,7 @@ const SprintList = () => {
   if (loading) return <CircularProgress />;
 
   return (
-    <Paper style={{ padding: 20 }}>
+    <Paper style={{ padding: 20, width: "100%" }}>
       <Typography variant="h6" style={{ marginBottom: 20 }}>
         Add New Sprint
       </Typography>
@@ -176,7 +176,7 @@ const SprintList = () => {
           </ListItem>
         ))}
       </List> */}
-      <div>
+      <div style={{ maxHeight: 400, overflowY: "auto" }}>
         {sprints.map((sprint) => (
           <Accordion
             key={sprint.id}
